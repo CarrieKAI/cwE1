@@ -1,0 +1,105 @@
+/*XPECT_SETUP uk.ac.kcl.inf.group19.easySql.xpect.XpectTests END_SETUP */
+
+/*
+XPECT generated ---
+SELECT name FROM student WHERE age = 15 
+SELECT salary FROM teacher WHERE name = ''zhangsan'' 
+SELECT location FROM school 
+SELECT DISTINCT schedule FROM work WHERE location = ''Austrailia'' 
+SELECT name FROM student WHERE freetime = ''sevenPm'' 
+SELECT name FROM student ORDER BY freetime ASC
+SELECT name FROM student WHERE freetime = ''sevenPm'' 
+SELECT DISTINCT salary FROM teacher WHERE name = ''zhangsan'' ORDER BY salary ASC
+SELECT DISTINCT salary FROM teacher WHERE name = ''zhangsan'' AND course = ''math'' 
+SELECT DISTINCT salary, number FROM teacher WHERE name = ''zhangsan'' ORDER BY name DESC
+SELECT DISTINCT salary FROM teacher WHERE name = ''zhangsan'' 
+SELECT DISTINCT location FROM school 
+SELECT DISTINCT * FROM work WHERE location = ''Austrailia'' 
+SELECT DISTINCT * FROM work 
+DELETE FROM student WHERE age < 9 
+DELETE FROM teacher WHERE age = 9 
+DELETE FROM teacher WHERE age >= 9 
+DELETE FROM school WHERE name != ''zhangsan'' 
+INSERT INTO student VALUES (''lisi'', 18, ''basketball'', 180, 140)
+INSERT INTO student VALUES ()
+INSERT INTO teacher VALUES (''lixiang'', 4200)
+UPDATE work SET location= ''china'', strength= ''weak''
+UPDATE work SET location= ''America'' WHERE location = ''china'' AND strength = ''weak''  
+SELECT teacher.name, school.name FROM teacher FULL JOIN school ON teacher.location = school.location
+SELECT teacher.name, school.name FROM teacher LEFT JOIN school ON teacher.location = school.location
+SELECT teacher.name, school.name FROM teacher RIGHT JOIN school ON teacher.location = school.location
+SELECT teacher.name, school.name, teacher.course FROM teacher INNER JOIN school ON teacher.location = school.location AND teacher.salary = school.alary
+SELECT teacher.name, school.name, teacher.course FROM teacher INNER JOIN school ON teacher.location = school.location AND teacher.salary = school.alary
+SELECT name,age,hobby FROM student WHERE height IN (SELECT height FROM student WHERE weight = 150 )
+SELECT name,gender,age FROM teacher WHERE salary,number IN (SELECT DISTINCT salary, number FROM teacher WHERE name = ''zhangsan'' ORDER BY name DESC)
+SELECT name,gender FROM teacher WHERE salary IN (SELECT DISTINCT salary FROM teacher WHERE name = ''zhangsan'' ORDER BY salary ASC)
+SELECT name,hobby FROM teacher WHERE studentTaught IN (SELECT name FROM student WHERE score > 90 )
+SELECT *  FROM teacher WHERE studentTaught IN (SELECT name FROM student WHERE score > 90 )
+---
+ */
+//Table Declaration
+Table student
+Table teacher
+Table school
+Table work
+
+
+//Single Selection Query
+//XPECT scope at student -->school, student, teacher, work
+student.Search(name).Condition(age=15)
+teacher.Search(salary).Condition(name = zhangsan)
+school.Search(location).Condition()
+work.Search(schedule).Condition(location = Austrailia).RemoveDuplication()
+student.Search(name).Condition(freetime=sevenPm).ascending()
+student.Search(name).Condition().ascending(freetime)
+student.Search(name).Condition(freetime=sevenPm).descending()
+teacher.Search(salary).Condition(name = zhangsan).RemoveDuplication().ascending(salary)
+teacher.Search(salary).Condition(name = zhangsan,course=math).RemoveDuplication().ascending()
+teacher.Search(salary,number).Condition(name = zhangsan).RemoveDuplication().descending(name)
+teacher.Search(salary).Condition(name = zhangsan).RemoveDuplication().descending()
+school.Search(location).Condition().RemoveDuplication()
+work.Search().Condition(location = Austrailia).RemoveDuplication()
+work.Search().Condition().RemoveDuplication()
+
+//Delete operation 
+//XPECT scope at teacher --> school, student, teacher, ...
+student.Delete(age<9)
+teacher.Delete(age=9)
+teacher.Delete(age>=9)
+school.Delete(name!=zhangsan)
+
+
+
+//Insert operation
+student.Insert(lisi,18,basketball,180,140)
+student.Insert()
+teacher.Insert(lixiang,4200)
+
+//Update operation
+work.Update(location=china,strength=weak).Condition()
+work.Update(location=America).Condition(location=china,strength=weak)
+
+
+//Join Query 
+teacher.Joinsearch(teacher-name, school-name).full_join(school).On(teacher-location=school-location)
+teacher.Joinsearch(teacher-name, school-name).left_join(school).On(teacher-location=school-location)
+teacher.Joinsearch(teacher-name, school-name).right_join(school).On(teacher-location=school-location)
+teacher.Joinsearch(teacher-name, school-name,teacher-course).inner_join(school).On(teacher-location=school-location,teacher-salary=school-alary)
+teacher.Joinsearch(teacher-name, school-name,teacher-course).inner_join(school).On(teacher-location=school-location,teacher-salary=school-alary)
+
+
+
+//Single Selection Declaration
+var selection1 = student.Search(height).Condition(weight=150)
+var selection2 = teacher.Search(salary,number).Condition(name = zhangsan).RemoveDuplication().descending(name)
+var selection3 = teacher.Search(salary).Condition(name = zhangsan).RemoveDuplication().ascending(salary)
+var selection4 = work.Search().Condition().RemoveDuplication()
+var selection5 = student.Search(name).Condition(score>90)
+
+//Nested Query
+student.Subsearch(name,age,hobby).When(height).In(selection1)
+teacher.Subsearch(name,gender,age).When(salary,number).In(selection2)
+teacher.Subsearch(name,gender).When(salary).In(selection3)
+teacher.Subsearch(name,hobby).When(studentTaught).In(selection5)
+teacher.Subsearch().When(studentTaught).In(selection5)
+
