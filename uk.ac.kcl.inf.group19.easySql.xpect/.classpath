@@ -7,6 +7,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="C:/Users/l/Documents/WeChat Files/wxid_tauqljhnan6w11/FileStorage/File/2022-04/aopalliance-1.0.jar"/>
+	<classpathentry kind="lib" path="aopalliance-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
