@@ -62,3 +62,4 @@ table_name.Subsearch(column(s)).When(column).In(single_select_name)
 ```
 Joinsearch(column(s)).inner_join/left_join/right_join/full_join. table_name2. on(table_name1.column=table_name2.column)
 ```
+
